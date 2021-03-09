@@ -1,0 +1,5 @@
+io\haufe\beercatalogueservice\BeerCatalogueServiceApplication.class
+io\haufe\beercatalogueservice\models\Beers.class
+io\haufe\beercatalogueservice\models\Manufacturer.class
+io\haufe\beercatalogueservice\resources\BeerCatalogueServiceResource.class
+io\haufe\beercatalogueservice\repository\BeerRepository.class
