@@ -5,16 +5,18 @@ import java.util.Objects;
 
 @Entity
 public class Beers {
-    private int id;
+    private long id;
     private String name;
     private String graduation;
     private String type;
     private String description;
     private Integer manufacturerId;
     private Manufacturer manufacturerByManufacturerId;
+
     public Beers() {
 
     }
+
     public Beers(String name, String graduation, String type, String description, Integer manufacturerId) {
         this.name = name;
         this.graduation = graduation;
@@ -24,12 +26,13 @@ public class Beers {
     }
 
     @Id
-    @Column(name = "id")
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -6,24 +6,27 @@ import java.util.Objects;
 
 @Entity
 public class Manufacturer {
-    private int id;
+    private long id;
     private String name;
     private String nacionality;
     private Collection<Beers> beersById;
 
-    public Manufacturer() {}
+    public Manufacturer() {
+    }
+
     public Manufacturer(String name, String nacionality) {
         this.name = name;
         this.nacionality = nacionality;
     }
 
     @Id
-    @Column(name = "id")
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
