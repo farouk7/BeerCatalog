@@ -2,7 +2,9 @@ package io.haufe.beercatalogueservice.service.serviceImp;
 
 import io.haufe.beercatalogueservice.models.Manufacturer;
 import io.haufe.beercatalogueservice.repository.ManufacturerRepository;
-import io.haufe.beercatalogueservice.service.ManufacturerService;
+import io.haufe.beercatalogueservice.service.IService;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,46 +12,40 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ManufacturerServiceImp implements ManufacturerService {
+public class ManufacturerServiceImp implements IService<Manufacturer> {
     @Autowired
     ManufacturerRepository manufacturerRepository;
 
     @Override
-    public List<Manufacturer> findAllManufacturers() {
+    public List<Manufacturer> findAll() {
         return manufacturerRepository.findAll();
     }
 
     @Override
-    public Optional<Manufacturer> findManufacturerById(Long id) {
+    public Optional<Manufacturer> findById(Long id) {
         Optional<Manufacturer> manufacturer = manufacturerRepository.findById(id);
         return manufacturer;
     }
 
     @Override
-    public Manufacturer saveManufacturer(Manufacturer manufacturer) {
-        if (manufacturer != null) {
-            return manufacturerRepository.save(manufacturer);
-        }
-        return new Manufacturer();
+    public Manufacturer saveOrUpdate(Manufacturer manufacturer) {
+
+        return manufacturerRepository.saveAndFlush(manufacturer);
     }
 
     @Override
-    public String deleteManufacturer(Long id) {
-        return null;
+    public String deleteById(Long id) {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            manufacturerRepository.deleteById(id);
+            jsonObject.put("message", "Manufacturer deleted successfully");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+
     }
 
-    @Override
-    public String updateManufacturer(Manufacturer manufacturer) {
-        Long num = manufacturer.getId();
-        if (manufacturerRepository.findById(num).isPresent()) {
-            Manufacturer manufacturerToUpdate = new Manufacturer();
-            manufacturerToUpdate.setId(manufacturer.getId());
-            manufacturerToUpdate.setName(manufacturer.getName());
-            manufacturerToUpdate.setNacionality(manufacturer.getNacionality());
-            manufacturerRepository.save(manufacturerToUpdate);
-            return "Manufacturer is updated";
-        }
-        return "Error to updated Manufacturer ";
-    }
 
 }

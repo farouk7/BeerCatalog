@@ -1,33 +1,39 @@
 package io.haufe.beercatalogueservice.controller.controllerImp;
-
-
-import io.haufe.beercatalogueservice.controller.BeerController;
+import io.haufe.beercatalogueservice.controller.Controller;
 import io.haufe.beercatalogueservice.models.Beers;
-import io.haufe.beercatalogueservice.service.BeerService;
+import io.haufe.beercatalogueservice.repository.BeerRepository;
+import io.haufe.beercatalogueservice.repository.UserRepository;
+import io.haufe.beercatalogueservice.service.IService;
+import io.haufe.beercatalogueservice.util.Util;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/catalog")
-public class BeerCatalogueServiceResource implements BeerController {
+@RequestMapping("/Beers")
+public class BeerCatalogueServiceResource implements Controller<Beers> {
     @Autowired
-    BeerService beerService;
+    IService<Beers> beerService;
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BeerRepository beerRepository;
 
     @Override
-    @GetMapping("/beers")
-    public ResponseEntity<List<Beers>> findAllBeers() {
+    public ResponseEntity<Collection<Beers>> findAll() {
         try {
-            List<Beers> beers = beerService.findAllBeers();
-
+            Collection<Beers> beers = beerService.findAll();
             if (beers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-
             return new ResponseEntity<>(beers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,10 +41,8 @@ public class BeerCatalogueServiceResource implements BeerController {
     }
 
     @Override
-    @GetMapping("/beers/{id}")
-    public ResponseEntity<Optional<Beers>> getBeerById(@PathVariable("id") Long id) {
-        Optional<Beers> beerData = beerService.findBeerById(id);
-
+    public ResponseEntity<Beers> findById(Long id) {
+        Optional<Beers> beerData = beerService.findById(id);
         if (beerData.isPresent()) {
             return new ResponseEntity(beerData.get(), HttpStatus.OK);
         } else {
@@ -47,37 +51,67 @@ public class BeerCatalogueServiceResource implements BeerController {
     }
 
     @Override
-    @PostMapping("/beers")
-    public ResponseEntity<Beers> addBeer(Beers beer) {
+    public ResponseEntity<Beers> add(Beers beers) {
         try {
-            Beers _beer = beerService.saveBeer(beer);
-            return new ResponseEntity<>(_beer, HttpStatus.CREATED);
+            JSONObject jsonObject = new JSONObject();
+            if (new Util(userRepository, beerRepository).checkAutorization(beers.getId())) {
+                Beers _beer = beerService.saveOrUpdate(beers);
+                return new ResponseEntity<>(_beer, HttpStatus.CREATED);
+            } else
+                jsonObject.put("message", "you can not delete this Beer");
+            return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    @DeleteMapping("/beers/{id}")
-    public ResponseEntity<HttpStatus> deleteBeer(@PathVariable("id") Long id) {
+    public ResponseEntity<Beers> update(Beers beers) {
         try {
-            beerService.deleteBeer(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
+            JSONObject jsonObject = new JSONObject();
+            if (new Util(userRepository, beerRepository).checkAutorization(beers.getId())) {
+                Optional<Beers> beerData = beerService.findById(beers.getId());
+                if (beerData.isPresent()) {
+                    beerService.saveOrUpdate(beers);
+                    return new ResponseEntity<>(beers, HttpStatus.OK);
+                } else {
+                    jsonObject.put("message", "you can not update this Beer");
+                    return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+                }
+            } else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (JSONException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    @PutMapping("/beers/{id}")
-    public ResponseEntity<Beers> updateBeer(@PathVariable("id") long id, Beers beer) {
-        Optional<Beers> beerData = beerService.findBeerById(id);
-
-        if (beerData.isPresent()) {
-            beerService.updateBeer(beer);
-            return new ResponseEntity<>(beer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> deleteById(Long id) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            if (new Util(userRepository, beerRepository).checkAutorization(id)) {
+                beerService.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else
+                jsonObject.put("message", "you can not delete this Beer");
+            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+        } catch (JSONException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<String> invalid() {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("message", "something is missing, please check everything before sending the request!");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+    }
+
+
 }
+

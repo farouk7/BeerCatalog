@@ -9,7 +9,12 @@ public class Manufacturer {
     private long id;
     private String name;
     private String nacionality;
+    @OneToMany(targetEntity = Beers.class, mappedBy = "manufacturerByManufacturerId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<Beers> beersById;
+
+    @OneToMany(targetEntity = Users.class, mappedBy = "manufacturer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<Users> userById;
+
 
     public Manufacturer() {
     }
@@ -68,9 +73,9 @@ public class Manufacturer {
     /*@OneToMany(mappedBy = "manufacturerByManufacturerId")
     public Collection<Beers> getBeersById() {
         return beersById;
-    }*/
+    }
 
     public void setBeersById(Collection<Beers> beersById) {
         this.beersById = beersById;
-    }
+    }*/
 }

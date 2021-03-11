@@ -10,19 +10,18 @@ public class Beers {
     private String graduation;
     private String type;
     private String description;
-    private Integer manufacturerId;
+    @ManyToOne
+    @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturerByManufacturerId;
 
     public Beers() {
 
     }
-
     public Beers(String name, String graduation, String type, String description, Integer manufacturerId) {
         this.name = name;
         this.graduation = graduation;
         this.type = type;
         this.description = description;
-        this.manufacturerId = manufacturerId;
     }
 
     @Id
@@ -76,15 +75,9 @@ public class Beers {
         this.description = description;
     }
 
-    @Basic
-    @Column(name = "manufacturer_id")
-    public Integer getManufacturerId() {
-        return manufacturerId;
-    }
 
-    public void setManufacturerId(Integer manufacturerId) {
-        this.manufacturerId = manufacturerId;
-    }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -95,17 +88,16 @@ public class Beers {
                 Objects.equals(name, beers.name) &&
                 Objects.equals(graduation, beers.graduation) &&
                 Objects.equals(type, beers.type) &&
-                Objects.equals(description, beers.description) &&
-                Objects.equals(manufacturerId, beers.manufacturerId);
+                Objects.equals(description, beers.description) ;
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, graduation, type, description, manufacturerId);
+        return Objects.hash(id, name, graduation, type, description);
     }
 
     @ManyToOne
-
     @JoinColumn(name = "manufacturer_id", referencedColumnName = "id", insertable = false, updatable = false)
     public Manufacturer getManufacturerByManufacturerId() {
         return manufacturerByManufacturerId;
