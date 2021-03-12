@@ -1,4 +1,5 @@
 package io.haufe.beercatalogueservice.controller.controllerImp;
+
 import io.haufe.beercatalogueservice.controller.Controller;
 import io.haufe.beercatalogueservice.models.Beers;
 import io.haufe.beercatalogueservice.repository.BeerRepository;
@@ -89,12 +90,16 @@ public class BeerCatalogueServiceResource implements Controller<Beers> {
     public ResponseEntity<String> deleteById(Long id) {
         try {
             JSONObject jsonObject = new JSONObject();
-            if (new Util(userRepository, beerRepository).checkAutorization(id)) {
-                beerService.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            Optional<Beers> beer = beerService.findById(id);
+            if (beer.isPresent()) {
+                if (new Util(userRepository, beerRepository).checkAutorization(id)) {
+                    beerService.deleteById(id);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else
+                    jsonObject.put("message", "you can not delete this Beer");
+                return new ResponseEntity<>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
             } else
-                jsonObject.put("message", "you can not delete this Beer");
-            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (JSONException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

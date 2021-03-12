@@ -63,7 +63,7 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
                 Manufacturer _manufacturer = manufacturerService.saveOrUpdate(manufacturer);
                 return new ResponseEntity<>(_manufacturer, HttpStatus.CREATED);
             } else
-                jsonObject.put("message", "you can not delete this Beer");
+                jsonObject.put("message", "you can not add this Manufacturer");
             return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,11 +80,12 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
                     manufacturerService.saveOrUpdate(manufacturer);
                     return new ResponseEntity<>(manufacturer, HttpStatus.OK);
                 } else {
-                    jsonObject.put("message", "you can not update this Beer");
-                    return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 }
             } else
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                jsonObject.put("message", "you can not update this Manufacturer");
+                return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+
         } catch (JSONException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -93,11 +94,16 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
     @Override
     public ResponseEntity<String> deleteById(Long id) {
         try {
-            if (new Util(userRepository, beerRepository).checkAutorization(id)) {
-                manufacturerService.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            Optional<Manufacturer> manufacturerData = manufacturerService.findById(id);
+            if (manufacturerData.isPresent()) {
+                if (new Util(userRepository, beerRepository).checkAutorization(id)) {
+                    manufacturerService.deleteById(id);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             } else
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
