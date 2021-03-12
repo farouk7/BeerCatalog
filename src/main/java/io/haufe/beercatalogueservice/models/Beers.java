@@ -17,7 +17,16 @@ public class Beers {
     public Beers() {
 
     }
-    public Beers(String name, String graduation, String type, String description, Integer manufacturerId) {
+
+    public Beers(String name, String graduation, String type, String description, Manufacturer manufacturerByManufacturerId) {
+        this.name = name;
+        this.graduation = graduation;
+        this.type = type;
+        this.description = description;
+        this.manufacturerByManufacturerId = manufacturerByManufacturerId;
+    }
+
+    public Beers(String name, String graduation, String type, String description) {
         this.name = name;
         this.graduation = graduation;
         this.type = type;
