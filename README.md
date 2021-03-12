@@ -33,11 +33,11 @@
 
 **8.2 endpoint Beers:**
 
-    `_http://localhost:8081/Beers ->[GET{id},POST{object},DELETE{id}]_`
+    `_http://localhost:8081/Beers ->[GET{id},PUT{object},POST{object},DELETE{id}]_`
 
 **8.3 endpoint Manufacturer:**
     
-    _http://localhost:8081/manufactuer ->[GET{id},POST{object},DELETE{id}]_
+    _http://localhost:8081/manufactuer ->[GET{id},PUT{object},POST{object},DELETE{id}]_
 
 
 ##**9. Objects**
@@ -61,7 +61,7 @@
         "manufacturerByManufacturerId": {
             "id": 1,
             "name": "Mahou",
-            "nacionality": "EspaÃ±a"
+            "nacionality": "Espana"
         }
 }]`
 
