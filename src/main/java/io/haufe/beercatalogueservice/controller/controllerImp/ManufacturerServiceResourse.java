@@ -1,7 +1,9 @@
 package io.haufe.beercatalogueservice.controller.controllerImp;
 
 import io.haufe.beercatalogueservice.controller.Controller;
+import io.haufe.beercatalogueservice.models.Beer;
 import io.haufe.beercatalogueservice.models.Manufacturer;
+import io.haufe.beercatalogueservice.models.Users;
 import io.haufe.beercatalogueservice.repository.BeerRepository;
 import io.haufe.beercatalogueservice.repository.UserRepository;
 import io.haufe.beercatalogueservice.service.IService;
@@ -21,10 +23,10 @@ import java.util.Optional;
 @RequestMapping("/manufacturer")
 public class ManufacturerServiceResourse implements Controller<Manufacturer> {
     @Autowired
-    UserRepository userRepository;
-
+    IService<Beer> beerService;
     @Autowired
-    BeerRepository beerRepository;
+    IService<Users> userService;
+
 
     @Autowired
     private IService<Manufacturer> manufacturerService;
@@ -59,7 +61,7 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
     public ResponseEntity<Manufacturer> add(Manufacturer manufacturer) {
         try {
             JSONObject jsonObject = new JSONObject();
-            if (new Util(userRepository, beerRepository).checkAutorization(manufacturer.getId())) {
+            if (new Util(userService, beerService).checkAutorization(manufacturer.getId())) {
                 Manufacturer _manufacturer = manufacturerService.saveOrUpdate(manufacturer);
                 return new ResponseEntity<>(_manufacturer, HttpStatus.CREATED);
             } else
@@ -75,7 +77,7 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
         try {
             Optional<Manufacturer> manufacturerData = manufacturerService.findById(manufacturer.getId());
             JSONObject jsonObject = new JSONObject();
-            if (new Util(userRepository, beerRepository).checkAutorization(manufacturer.getId())) {
+            if (new Util(userService, beerService).checkAutorization(manufacturer.getId())) {
                 if (manufacturerData.isPresent()) {
                     manufacturerService.saveOrUpdate(manufacturer);
                     return new ResponseEntity<>(manufacturer, HttpStatus.OK);
@@ -96,7 +98,7 @@ public class ManufacturerServiceResourse implements Controller<Manufacturer> {
         try {
             Optional<Manufacturer> manufacturerData = manufacturerService.findById(id);
             if (manufacturerData.isPresent()) {
-                if (new Util(userRepository, beerRepository).checkAutorization(id)) {
+                if (new Util(userService, beerService).checkAutorization(id)) {
                     manufacturerService.deleteById(id);
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 } else

@@ -1,9 +1,8 @@
 package io.haufe.beercatalogueservice.controller.controllerImp;
 
 import io.haufe.beercatalogueservice.controller.Controller;
-import io.haufe.beercatalogueservice.models.Beers;
-import io.haufe.beercatalogueservice.repository.BeerRepository;
-import io.haufe.beercatalogueservice.repository.UserRepository;
+import io.haufe.beercatalogueservice.models.Beer;
+import io.haufe.beercatalogueservice.models.Users;
 import io.haufe.beercatalogueservice.service.IService;
 import io.haufe.beercatalogueservice.util.Util;
 import org.codehaus.jettison.json.JSONException;
@@ -19,19 +18,18 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/Beers")
-public class BeerCatalogueServiceResource implements Controller<Beers> {
+public class BeerCatalogueServiceResource implements Controller<Beer> {
     @Autowired
-    IService<Beers> beerService;
+    IService<Beer> beerService;
     @Autowired
-    UserRepository userRepository;
+    IService<Users> userService;
 
-    @Autowired
-    BeerRepository beerRepository;
+
 
     @Override
-    public ResponseEntity<Collection<Beers>> findAll() {
+    public ResponseEntity<Collection<Beer>> findAll() {
         try {
-            Collection<Beers> beers = beerService.findAll();
+            Collection<Beer> beers = beerService.findAll();
             if (beers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -42,8 +40,8 @@ public class BeerCatalogueServiceResource implements Controller<Beers> {
     }
 
     @Override
-    public ResponseEntity<Beers> findById(Long id) {
-        Optional<Beers> beerData = beerService.findById(id);
+    public ResponseEntity<Beer> findById(Long id) {
+        Optional<Beer> beerData = beerService.findById(id);
         if (beerData.isPresent()) {
             return new ResponseEntity(beerData.get(), HttpStatus.OK);
         } else {
@@ -52,11 +50,11 @@ public class BeerCatalogueServiceResource implements Controller<Beers> {
     }
 
     @Override
-    public ResponseEntity<Beers> add(Beers beers) {
+    public ResponseEntity<Beer> add(Beer beer) {
         try {
             JSONObject jsonObject = new JSONObject();
-            if (new Util(userRepository, beerRepository).checkAutorization(beers.getId())) {
-                Beers _beer = beerService.saveOrUpdate(beers);
+            if (new Util(userService, beerService).checkAutorization(beer.getId())) {
+                Beer _beer = beerService.saveOrUpdate(beer);
                 return new ResponseEntity<>(_beer, HttpStatus.CREATED);
             } else
                 jsonObject.put("message", "you can not delete this Beer");
@@ -67,14 +65,14 @@ public class BeerCatalogueServiceResource implements Controller<Beers> {
     }
 
     @Override
-    public ResponseEntity<Beers> update(Beers beers) {
+    public ResponseEntity<Beer> update(Beer beer) {
         try {
             JSONObject jsonObject = new JSONObject();
-            if (new Util(userRepository, beerRepository).checkAutorization(beers.getId())) {
-                Optional<Beers> beerData = beerService.findById(beers.getId());
+            if (new Util(userService, beerService).checkAutorization(beer.getId())) {
+                Optional<Beer> beerData = beerService.findById(beer.getId());
                 if (beerData.isPresent()) {
-                    beerService.saveOrUpdate(beers);
-                    return new ResponseEntity<>(beers, HttpStatus.OK);
+                    beerService.saveOrUpdate(beer);
+                    return new ResponseEntity<>(beer, HttpStatus.OK);
                 } else {
                     jsonObject.put("message", "you can not update this Beer");
                     return new ResponseEntity(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
@@ -90,9 +88,9 @@ public class BeerCatalogueServiceResource implements Controller<Beers> {
     public ResponseEntity<String> deleteById(Long id) {
         try {
             JSONObject jsonObject = new JSONObject();
-            Optional<Beers> beer = beerService.findById(id);
+            Optional<Beer> beer = beerService.findById(id);
             if (beer.isPresent()) {
-                if (new Util(userRepository, beerRepository).checkAutorization(id)) {
+                if (new Util(userService, beerService).checkAutorization(id)) {
                     beerService.deleteById(id);
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 } else

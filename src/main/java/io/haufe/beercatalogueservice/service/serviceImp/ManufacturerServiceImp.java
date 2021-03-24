@@ -47,5 +47,10 @@ public class ManufacturerServiceImp implements IService<Manufacturer> {
 
     }
 
+    @Override
+    public Manufacturer findbyString(String t) {
+        return null;
+    }
+
 
 }

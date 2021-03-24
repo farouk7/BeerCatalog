@@ -46,4 +46,9 @@ public class RoleServiceImp implements IService<Role> {
         return jsonObject.toString();
     }
 
+    @Override
+    public Role findbyString(String t) {
+        return null;
+    }
+
 }

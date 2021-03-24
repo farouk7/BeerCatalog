@@ -35,6 +35,10 @@ public class UserServiceImp implements IService<Users> {
     }
 
     @Override
+    public Users findbyString(String user) {
+        return userRepository.findByEmail(user);
+    }
+    @Override
     public String deleteById(Long id) {
         JSONObject jsonObject = new JSONObject();
         try {

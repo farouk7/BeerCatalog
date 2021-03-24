@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Beers {
+public class Beer {
     private long id;
     private String name;
     private String graduation;
@@ -14,11 +14,11 @@ public class Beers {
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturerByManufacturerId;
 
-    public Beers() {
+    public Beer() {
 
     }
 
-    public Beers(String name, String graduation, String type, String description, Manufacturer manufacturerByManufacturerId) {
+    public Beer(String name, String graduation, String type, String description, Manufacturer manufacturerByManufacturerId) {
         this.name = name;
         this.graduation = graduation;
         this.type = type;
@@ -26,7 +26,7 @@ public class Beers {
         this.manufacturerByManufacturerId = manufacturerByManufacturerId;
     }
 
-    public Beers(String name, String graduation, String type, String description) {
+    public Beer(String name, String graduation, String type, String description) {
         this.name = name;
         this.graduation = graduation;
         this.type = type;
@@ -92,12 +92,12 @@ public class Beers {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Beers beers = (Beers) o;
-        return id == beers.id &&
-                Objects.equals(name, beers.name) &&
-                Objects.equals(graduation, beers.graduation) &&
-                Objects.equals(type, beers.type) &&
-                Objects.equals(description, beers.description) ;
+        Beer beer = (Beer) o;
+        return id == beer.id &&
+                Objects.equals(name, beer.name) &&
+                Objects.equals(graduation, beer.graduation) &&
+                Objects.equals(type, beer.type) &&
+                Objects.equals(description, beer.description) ;
 
     }
 

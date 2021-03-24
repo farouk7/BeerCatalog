@@ -9,8 +9,8 @@ public class Manufacturer {
     private long id;
     private String name;
     private String nacionality;
-    @OneToMany(targetEntity = Beers.class, mappedBy = "manufacturerByManufacturerId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Collection<Beers> beersById;
+    @OneToMany(targetEntity = Beer.class, mappedBy = "manufacturerByManufacturerId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<Beer> beerById;
 
     @OneToMany(targetEntity = Users.class, mappedBy = "manufacturer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Collection<Users> userById;

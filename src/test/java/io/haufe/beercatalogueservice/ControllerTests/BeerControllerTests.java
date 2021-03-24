@@ -1,24 +1,11 @@
 package io.haufe.beercatalogueservice.ControllerTests;
 
-import io.haufe.beercatalogueservice.models.Beers;
-import io.haufe.beercatalogueservice.service.IService;
-import io.haufe.beercatalogueservice.service.serviceImp.BeerServiceImp;
-import org.junit.Assert;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.*;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class BeersControllerTests {
+public class BeerControllerTests {
 /*
         @Mock
         private RestTemplate restTemplate;
